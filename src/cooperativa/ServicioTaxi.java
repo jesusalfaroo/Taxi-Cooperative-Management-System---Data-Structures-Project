@@ -1,7 +1,7 @@
-package cooperativa;
-/** Coordina el funcionamiento del sistema: zonas, conductores, solicitudes, rutas e historial. */
+package cooperativa; 
 
-
+// Clase principal que gestiona el servicio de taxi, incluyendo conductores, operadores, solicitudes, rutas y el grafo de zonas. 
+// Proporciona métodos para registrar zonas, conexiones, conductores y solicitudes, así como para atender,
 public class ServicioTaxi {
 
     private final ListaEnlazada<Conductor> conductores = new ListaEnlazada<>();
@@ -16,63 +16,65 @@ public class ServicioTaxi {
     private int maxOperadores = 1;
     private int operadoresOcupados = 0;
 
-    /** Permite consultar el grafo de zonas desde la interfaz principal. */
+    // Devuelve el grafo de zonas para permitir su manipulación desde el menú de consola.
     public GrafoZonas getGrafo() {
         return grafo;
     }
 
-    /** Devuelve la lista de conductores registrados. */
+    // Devuelve la lista de conductores registrados.
     public String listarConductores() {
         return conductores.mostrarEnLineas();
     }
 
-    /** Devuelve la lista de operadores registrados. */
+    // Devuelve la lista de operadores registrados.
     public String listarOperadores() {
         return operadores.mostrarEnLineas();
     }
 
-    /** Devuelve las solicitudes que siguen en cola. */
+    // Devuelve las solicitudes que siguen en cola.
     public String listarSolicitudesPendientes() {
         return solicitudesPendientes.mostrarEnLineas();
     }
 
-    /** Devuelve las solicitudes que ya fueron atendidas y siguen activas. */
+    // Devuelve las solicitudes que ya fueron atendidas y siguen activas.
     public String listarSolicitudesActivas() {
         return solicitudesActivas.mostrarEnLineas();
     }
 
-    /** Devuelve el historial de solicitudes cerradas. */
+    // Devuelve el historial de solicitudes cerradas.
     public String listarHistorial() {
         return historial.mostrarEnLineas();
     }
 
-    /** Devuelve la pila de acciones operativas recientes. */
+    // Devuelve la pila de acciones operativas recientes.
     public String listarPilaOperaciones() {
         return pilaOperaciones.mostrarEnLineas();
     }
 
-    /** Registra un operador y deja evidencia en la pila de operaciones. */
+    // Registra un operador y deja evidencia en la pila de operaciones.
     public void agregarOperador(String nombre) {
         operadores.agregar(nombre);
         pilaOperaciones.apilar("Se registró el operador: " + nombre);
     }
 
-    /** Define la cantidad máxima de operadores que pueden atender al mismo tiempo. */
+    // Define la cantidad máxima de operadores que pueden atender al mismo tiempo.
     public void establecerMaxOperadores(int maxOperadores) {
         if (maxOperadores > 0) {
             this.maxOperadores = maxOperadores;
         }
     }
 
+    // Devuelve la cantidad máxima de operadores que pueden atender al mismo tiempo.
     public int getMaxOperadores() {
         return maxOperadores;
     }
 
+    // Devuelve la cantidad de operadores que actualmente están ocupados atendiendo solicitudes.
     public int getOperadoresOcupados() {
         return operadoresOcupados;
     }
 
-    /** Registra una nueva zona en el grafo. */
+    // Registra una nueva zona en el grafo.
     public boolean registrarZona(String nombre) {
         boolean ok = grafo.agregarZona(nombre);
         if (ok) {
@@ -81,7 +83,7 @@ public class ServicioTaxi {
         return ok;
     }
 
-    /** Registra una conexión entre dos zonas. */
+    // Registra una conexión entre dos zonas.
     public boolean registrarConexion(String origen, String destino, int distanciaMetros) {
         boolean ok = grafo.agregarConexion(origen, destino, distanciaMetros);
         if (ok) {
@@ -90,7 +92,7 @@ public class ServicioTaxi {
         return ok;
     }
 
-    /** Cambia el estado de una vía a habilitada o cerrada. */
+    // Cambia el estado de una vía a habilitada o cerrada.
     public boolean cambiarEstadoConexion(String origen, String destino, boolean activa) {
         boolean ok = grafo.cambiarEstadoConexion(origen, destino, activa);
         if (ok) {
@@ -99,7 +101,7 @@ public class ServicioTaxi {
         return ok;
     }
 
-    /** Registra un conductor y valida que su zona exista y que la placa no esté repetida. */
+    // Registra un conductor y valida que su zona exista y que la placa no esté repetida.
     public boolean registrarConductor(String placa, String nombre, String cedula, String zonaActual,
                                       boolean estandar, boolean baul, boolean mascotas) {
         if (!grafo.existeZona(zonaActual)) {
@@ -113,8 +115,10 @@ public class ServicioTaxi {
         return true;
     }
 
-    /** Encola una nueva solicitud de servicio. */
+    // Encola una nueva solicitud de servicio.
     public boolean registrarSolicitud(String origen, String destino, TipoServicio tipoServicio) {
+
+        // Valida que las zonas de origen y destino existan en el grafo antes de registrar la solicitud.
         if (!grafo.existeZona(origen) || !grafo.existeZona(destino)) {
             return false;
         }
@@ -124,9 +128,9 @@ public class ServicioTaxi {
         return true;
     }
 
-    /** Atiende la primera solicitud de la cola si hay conductor y ruta disponibles. */
+    // Atiende la primera solicitud de la cola si hay conductor y ruta disponibles.
     public Solicitud atenderSiguienteSolicitud() {
-        // Si no hay solicitudes esperando, no hay nada que atender.
+
         if (solicitudesPendientes.estaVacia()) {
             return null;
         }
@@ -156,6 +160,7 @@ public class ServicioTaxi {
         // Ruta del viaje solicitado por el usuario.
         ResultadoRuta rutaServicio = grafo.rutaMasCorta(solicitud.getZonaOrigen(), solicitud.getZonaDestino());
 
+        // Si alguna de las rutas no es posible por cierres viales, se devuelve la solicitud a la cola de pendientes y se libera al operador.
         if (!rutaRecogida.isEncontrada() || !rutaServicio.isEncontrada()) {
             solicitud.setEstado(EstadoSolicitud.EN_ESPERA);
             solicitudesPendientes.encolar(solicitud);
@@ -164,6 +169,7 @@ public class ServicioTaxi {
             return null;
         }
 
+        // Se asigna el conductor a la solicitud, se actualiza su estado a ocupado y se registran los detalles de la ruta y tiempos estimados para mostrar al operador en el menú de consola.
         candidato.setDisponible(false);
         solicitud.setPlacaConductor(candidato.getPlaca());
         solicitud.setNombreConductor(candidato.getNombre());
@@ -191,7 +197,7 @@ public class ServicioTaxi {
         return solicitud;
     }
 
-    /** Marca una solicitud activa como finalizada y la mueve al historial. */
+    // Finaliza una solicitud activa, liberando al conductor y registrando el motivo de cierre en el historial.
     public boolean finalizarSolicitud(int id) {
         Solicitud solicitud = solicitudesActivas.buscar(s -> s.getId() == id);
         if (solicitud == null) {
@@ -211,7 +217,7 @@ public class ServicioTaxi {
         return true;
     }
 
-    /** Cancela una solicitud activa o pendiente y la guarda en el historial. */
+    // Cancela una solicitud activa o pendiente por medio de su ID, solicitando un motivo de cancelación y mostrando un mensaje de éxito o error según corresponda.
     public boolean cancelarSolicitud(int id, String motivo) {
         Solicitud solicitudActiva = solicitudesActivas.buscar(s -> s.getId() == id);
         if (solicitudActiva != null) {
@@ -241,22 +247,22 @@ public class ServicioTaxi {
         return false;
     }
 
-    /** Busca una solicitud dentro de las activas. */
+    // Busca una solicitud dentro de las activas.
     public Solicitud buscarSolicitudActivaPorId(int id) {
         return solicitudesActivas.buscar(s -> s.getId() == id);
     }
 
-    /** Busca una solicitud dentro de la cola de pendientes. */
+    // Busca una solicitud dentro de la cola de pendientes.
     public Solicitud buscarSolicitudEnPendientesPorId(int id) {
         return solicitudesPendientes.buscar(s -> s.getId() == id);
     }
 
-    /** Busca un conductor por su placa. */
+    // Busca un conductor por su placa.
     public Conductor buscarConductorPorPlaca(String placa) {
         return conductores.buscar(c -> c.getPlaca().equalsIgnoreCase(placa.trim()));
     }
 
-    /** Resume en texto el estado general del sistema. */
+    // Resume en texto el estado general del sistema.
     public String verEstadoGeneral() {
         StringBuilder sb = new StringBuilder();
         sb.append("=== ESTADO GENERAL ===\n");
@@ -270,9 +276,10 @@ public class ServicioTaxi {
         return sb.toString();
     }
 
-    /** Carga datos de ejemplo para demostrar el funcionamiento del sistema. */
+    // Carga datos de ejemplo para demostrar el funcionamiento del sistema.
     public String cargarDatosDemostracion() {
-        StringBuilder sb = new StringBuilder();
+
+        StringBuilder sb = new StringBuilder(); // Se utiliza un StringBuilder para acumular mensajes sobre la carga de datos de demostración, que se mostrarán al usuario en el menú de consola.
         registrarZona("Centro");
         registrarZona("Norte");
         registrarZona("Sur");
@@ -305,10 +312,12 @@ public class ServicioTaxi {
         return sb.toString();
     }
 
-    /** Selecciona el conductor disponible más cercano y habilitado para el servicio. */
+    // Selecciona el mejor conductor disponible para atender una solicitud, considerando su disponibilidad, habilitación para el tipo de servicio solicitado y cercanía a la zona de origen del pasajero.
     private Conductor seleccionarMejorConductor(Solicitud solicitud) {
         Conductor mejor = null;
         int mejorDistancia = Integer.MAX_VALUE;
+
+        // Se recorre la lista de conductores para encontrar el más adecuado según los criterios mencionados, utilizando el grafo de zonas para calcular la distancia desde su ubicación actual hasta la zona de origen de la solicitud.
         for (int i = 0; i < conductores.tamanio(); i++) {
             Conductor conductor = conductores.obtener(i);
             if (conductor == null || !conductor.isDisponible() || !conductor.puedeAtender(solicitud.getTipoServicio())) {
@@ -328,7 +337,7 @@ public class ServicioTaxi {
         return mejor;
     }
 
-    /** Calcula la tarifa final según la distancia recorrida. */
+    // Calcula la tarifa final según la distancia recorrida.
     private int calcularTarifa(int distanciaMetros) {
         int base = 5000;
         int adicional;

@@ -1,9 +1,11 @@
 package cooperativa;
-/** Grafo no dirigido de zonas y vías, con cálculo de rutas más cortas. */
+// Representa el grafo de zonas y conexiones entre ellas, con métodos para agregar zonas, crear vías, 
+// habilitar o cerrar conexiones y calcular rutas más cortas usando solo vías habilitadas.
 
-
+// El grafo se implementa con una lista enlazada de nodos, donde cada nodo representa una zona y contiene una lista de conexiones hacia otras zonas.
 public class GrafoZonas {
 
+    // Clase interna que representa un nodo del grafo, con su zona y lista de conexiones hacia otras zonas.
     private static class NodoZona {
         Zona zona;
         ListaEnlazada<Conexion> conexiones = new ListaEnlazada<>();
@@ -15,7 +17,7 @@ public class GrafoZonas {
 
     private final ListaEnlazada<NodoZona> nodos = new ListaEnlazada<>();
 
-    /** Agrega una nueva zona al grafo si todavía no existe. */
+    // Agrega una nueva zona al grafo si todavía no existe.
     public boolean agregarZona(String nombre) {
         if (buscarNodo(nombre) != null) {
             return false;
@@ -24,12 +26,12 @@ public class GrafoZonas {
         return true;
     }
 
-    /** Verifica si una zona ya está registrada. */
+    // Verifica si una zona ya está registrada.
     public boolean existeZona(String nombre) {
         return buscarNodo(nombre) != null;
     }
 
-    /** Agrega una vía bidireccional entre dos zonas. */
+    // Agrega una vía bidireccional entre dos zonas.
     public boolean agregarConexion(String origen, String destino, int distanciaMetros) {
         NodoZona nodoOrigen = buscarNodo(origen);
         NodoZona nodoDestino = buscarNodo(destino);
@@ -46,7 +48,7 @@ public class GrafoZonas {
         return true;
     }
 
-    /** Habilita o deshabilita una conexión existente. */
+    // Habilita o deshabilita una conexión existente.
     public boolean cambiarEstadoConexion(String origen, String destino, boolean activa) {
         Conexion c1 = buscarConexion(origen, destino);
         Conexion c2 = buscarConexion(destino, origen);
@@ -58,7 +60,7 @@ public class GrafoZonas {
         return true;
     }
 
-    /** Lista todas las zonas registradas en el sistema. */
+    // Lista todas las zonas registradas en el sistema.
     public String listarZonas() {
         if (nodos.estaVacia()) {
             return "(sin zonas)";
@@ -71,7 +73,7 @@ public class GrafoZonas {
         return sb.toString();
     }
 
-    /** Lista todas las conexiones por zona y su estado actual. */
+    // Lista todas las conexiones por zona y su estado actual.
     public String listarConexiones() {
         if (nodos.estaVacia()) {
             return "(sin conexiones)";
@@ -95,7 +97,7 @@ public class GrafoZonas {
         return sb.toString();
     }
 
-    /** Calcula la ruta más corta usando solo conexiones habilitadas. */
+    // Calcula la ruta más corta usando solo conexiones habilitadas.
     public ResultadoRuta rutaMasCorta(String origen, String destino) {
         int n = nodos.tamanio();
         int idxOrigen = indiceZona(origen);
@@ -154,6 +156,7 @@ public class GrafoZonas {
             }
         }
 
+        // Si la distancia al destino sigue siendo infinito, no hay ruta habilitada.
         if (dist[idxDestino] == Integer.MAX_VALUE) {
             return new ResultadoRuta(false, Integer.MAX_VALUE, "No existe ruta habilitada");
         }
@@ -162,7 +165,7 @@ public class GrafoZonas {
         return new ResultadoRuta(true, dist[idxDestino], ruta);
     }
 
-    /** Busca una conexión específica entre dos zonas. */
+    // Busca una conexión específica entre dos zonas.
     public Conexion buscarConexion(String origen, String destino) {
         NodoZona nodo = buscarNodo(origen);
         if (nodo == null) {
@@ -177,6 +180,7 @@ public class GrafoZonas {
         return null;
     }
 
+    // Reconstruye la ruta desde el arreglo de nodos previos generado por Dijkstra, formando una cadena legible para el menú de consola.
     private String reconstruirRuta(int[] prev, int destino) {
         int n = nodos.tamanio();
         int[] orden = new int[n];
@@ -196,6 +200,7 @@ public class GrafoZonas {
         return sb.toString();
     }
 
+    // Obtiene el índice de una zona en la lista de nodos, o -1 si no existe.
     private int indiceZona(String nombre) {
         for (int i = 0; i < nodos.tamanio(); i++) {
             if (nodos.obtener(i).zona.getNombre().equalsIgnoreCase(nombre.trim())) {
@@ -205,6 +210,7 @@ public class GrafoZonas {
         return -1;
     }
 
+    // Busca un nodo por su nombre de zona, devolviendo el nodo completo o null si no se encuentra.
     private NodoZona buscarNodo(String nombre) {
         for (int i = 0; i < nodos.tamanio(); i++) {
             NodoZona nz = nodos.obtener(i);

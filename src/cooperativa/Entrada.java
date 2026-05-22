@@ -1,19 +1,20 @@
 package cooperativa;
-/** Maneja la lectura segura de datos por consola. */
 
 
+// Clase que facilita la lectura de entradas desde la terminal, con métodos para leer texto, números enteros, opciones sí/no y validación de rangos.
 import java.util.Scanner;
 
 public class Entrada {
     private final Scanner scanner = new Scanner(System.in);
 
-    /** Lee texto desde la terminal. */
+    // Lee una línea de texto desde la terminal, mostrando un mensaje de solicitud. 
+    // El texto se recorta para eliminar espacios al inicio y al final.
     public String leerTexto(String mensaje) {
         System.out.print(mensaje);
         return scanner.nextLine().trim();
     }
 
-    /** Lee un número entero desde la terminal, repitiendo la solicitud si hay error. */
+    // Lee un número entero desde la terminal, repitiendo la solicitud si hay error.
     public int leerEntero(String mensaje) {
         while (true) {
             System.out.print(mensaje);
@@ -26,7 +27,7 @@ public class Entrada {
         }
     }
 
-    /** Lee un entero y valida que esté dentro de un rango permitido. */
+    // Lee un entero y valida que esté dentro de un rango permitido.
     public int leerEnteroEnRango(String mensaje, int min, int max) {
         while (true) {
             int valor = leerEntero(mensaje);
@@ -37,7 +38,7 @@ public class Entrada {
         }
     }
 
-    /** Lee una respuesta sí/no desde la terminal. */
+    // Lee una respuesta sí/no desde la terminal.
     public boolean leerSiNo(String mensaje) {
         while (true) {
             String r = leerTexto(mensaje + " (s/n): ").toLowerCase();

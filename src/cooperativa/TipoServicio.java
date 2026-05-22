@@ -1,12 +1,12 @@
 package cooperativa;
-/** Tipos de servicio que puede solicitar un usuario y que puede atender un conductor. */
 
-
+// Enumeración que define los tipos de servicio disponibles para las solicitudes de taxi.
 public enum TipoServicio {
     ESTANDAR,
     BAUL_O_PARRILLA,
     MASCOTAS;
 
+    // Convierte una opción numérica en un tipo de servicio, facilitando la selección del tipo de taxi requerido por el usuario a través del menú de consola.
     public static TipoServicio fromOpcion(int opcion) {
         return switch (opcion) {
             case 1 -> ESTANDAR;
@@ -16,6 +16,7 @@ public enum TipoServicio {
         };
     }
 
+    // Representa el tipo de servicio en formato legible, mostrando su nombre para facilitar su visualización en el menú de consola.
     @Override
     public String toString() {
         return switch (this) {

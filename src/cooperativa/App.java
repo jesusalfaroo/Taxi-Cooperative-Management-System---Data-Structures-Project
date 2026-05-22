@@ -1,10 +1,11 @@
 package cooperativa;
-/** Punto de entrada de la aplicación en consola. Muestra el menú principal y conecta las opciones con el sistema. */
 
-
+// Clase principal que contiene el método main para ejecutar el sistema de gestión de servicios de taxi, 
+// mostrando un menú interactivo para realizar diversas acciones relacionadas con zonas, conexiones, operadores, conductores y solicitudes.
 public class App {
 
-    /** Lanza el menú principal de la aplicación. */
+    // El método main muestra un menú interactivo para gestionar zonas, conexiones, operadores, conductores y solicitudes de taxi, 
+    // permitiendo al usuario realizar diversas acciones y ver el estado general del sistema.
     public static void main(String[] args) {
         Entrada entrada = new Entrada();
         ServicioTaxi sistema = new ServicioTaxi();
@@ -32,7 +33,7 @@ public class App {
 
             int opcion = entrada.leerEnteroEnRango("Selecciona una opción: ", 0, 14);
 
-            // Cada opción del menú ejecuta una acción del sistema.
+            // Cada opción del menú ejecuta una acción del sistema, mostrando mensajes de éxito o error según corresponda.
             switch (opcion) {
                 case 1 -> {
                     System.out.println(sistema.cargarDatosDemostracion());
@@ -87,7 +88,7 @@ public class App {
         System.out.println("Gracias por usar el sistema.");
     }
 
-    /** Captura los datos de un conductor y los envía al sistema. */
+    // Captura los datos de un conductor y los envía al sistema para su registro, mostrando un mensaje de éxito o error según corresponda.
     private static void registrarConductor(Entrada entrada, ServicioTaxi sistema) {
         String placa = entrada.leerTexto("Placa: ");
         String nombre = entrada.leerTexto("Nombre completo: ");
@@ -101,7 +102,7 @@ public class App {
         System.out.println(ok ? "Conductor registrado correctamente." : "No se pudo registrar el conductor. Verifica la zona o la placa.");
     }
 
-    /** Captura los datos de una solicitud y la coloca en la cola. */
+    // Captura los datos de una solicitud y la coloca en la cola de solicitudes pendientes, mostrando un mensaje de éxito o error según corresponda.
     private static void registrarSolicitud(Entrada entrada, ServicioTaxi sistema) {
         String origen = entrada.leerTexto("Zona de origen: ");
         String destino = entrada.leerTexto("Zona de destino: ");
@@ -110,6 +111,7 @@ public class App {
         System.out.println("2. Taxi con baúl o parrilla");
         System.out.println("3. Taxi para mascotas");
         TipoServicio tipo = null;
+        // El bucle asegura que el usuario seleccione un tipo de servicio válido antes de continuar.
         while (tipo == null) {
             int op = entrada.leerEnteroEnRango("Selecciona: ", 1, 3);
             tipo = TipoServicio.fromOpcion(op);
@@ -118,9 +120,10 @@ public class App {
         System.out.println(ok ? "Solicitud encolada correctamente." : "No fue posible registrar la solicitud. Revisa las zonas.");
     }
 
-    /** Atiende la siguiente solicitud disponible y muestra el detalle completo. */
+    // Atiende la siguiente solicitud disponible y muestra el detalle completo de la asignación, o un mensaje de error si no se pudo atender.
     private static void atenderSolicitud(ServicioTaxi sistema) {
         Solicitud solicitud = sistema.atenderSiguienteSolicitud();
+        // Si no hay solicitudes pendientes, conductores disponibles o capacidad de operadores, se muestra un mensaje informativo.
         if (solicitud == null) {
             System.out.println("No se pudo atender la solicitud. Puede no haber solicitudes, conductores disponibles o capacidad de operadores.");
             return;
@@ -129,14 +132,14 @@ public class App {
         System.out.println(solicitud.detalleCompleto());
     }
 
-    /** Finaliza una solicitud activa por medio de su ID. */
+    // Finaliza una solicitud activa por medio de su ID, mostrando un mensaje de éxito o error según corresponda.
     private static void finalizarSolicitud(Entrada entrada, ServicioTaxi sistema) {
         int id = entrada.leerEntero("ID de la solicitud a finalizar: ");
         boolean ok = sistema.finalizarSolicitud(id);
         System.out.println(ok ? "Solicitud finalizada." : "No se encontró una solicitud activa con ese ID.");
     }
 
-    /** Cancela una solicitud activa o pendiente por medio de su ID. */
+    // Cancela una solicitud activa o pendiente por medio de su ID, solicitando un motivo de cancelación y mostrando un mensaje de éxito o error según corresponda.
     private static void cancelarSolicitud(Entrada entrada, ServicioTaxi sistema) {
         int id = entrada.leerEntero("ID de la solicitud a cancelar: ");
         String motivo = entrada.leerTexto("Motivo de la cancelación: ");
@@ -144,7 +147,7 @@ public class App {
         System.out.println(ok ? "Solicitud cancelada." : "No se encontró una solicitud activa o pendiente con ese ID.");
     }
 
-    /** Muestra la información principal almacenada en el sistema. */
+    // Muestra la información principal almacenada en el sistema, incluyendo conductores, operadores, zonas, conexiones y solicitudes, de forma legible para el menú de consola.
     private static void verDatos(ServicioTaxi sistema) {
         System.out.println("\n=== CONDUCTORES ===");
         System.out.println(sistema.listarConductores());

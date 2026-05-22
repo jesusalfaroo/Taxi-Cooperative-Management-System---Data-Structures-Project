@@ -1,12 +1,12 @@
 package cooperativa;
-/** Implementación manual de una lista enlazada simple para almacenar entidades del sistema. */
 
+import java.util.function.Predicate; // Importa la clase Predicate para permitir la eliminación y búsqueda de elementos en la lista según una condición específica.
 
-import java.util.function.Predicate;
-
+// Clase genérica que representa una lista enlazada simple, con nodos que almacenan datos y referencias al siguiente nodo.
 public class ListaEnlazada<T> {
 
-    private static class Nodo<T> {
+    // Nodo interno que representa cada elemento de la lista, con su dato y referencia al siguiente nodo.
+    private static class Nodo<T> { 
         T dato;
         Nodo<T> siguiente;
 
@@ -18,7 +18,7 @@ public class ListaEnlazada<T> {
     private Nodo<T> cabeza;
     private int tamanio;
 
-    /** Agrega un elemento al final de la lista. */
+    // Agrega un elemento al final de la lista.
     public void agregar(T dato) {
         Nodo<T> nuevo = new Nodo<>(dato);
         if (cabeza == null) {
@@ -33,11 +33,12 @@ public class ListaEnlazada<T> {
         tamanio++;
     }
 
-    /** Elimina el primer elemento que cumpla la condición recibida. */
+    // Elimina el primer elemento que cumpla la condición recibida.
     public boolean eliminar(Predicate<T> condicion) {
         Nodo<T> actual = cabeza;
         Nodo<T> anterior = null;
 
+        // Recorre la lista buscando el primer nodo que cumpla la condición.
         while (actual != null) {
             if (condicion.test(actual.dato)) {
                 if (anterior == null) {
@@ -54,9 +55,10 @@ public class ListaEnlazada<T> {
         return false;
     }
 
-    /** Busca un elemento según una condición. */
+    // Busca un elemento según una condición.
     public T buscar(Predicate<T> condicion) {
         Nodo<T> actual = cabeza;
+        // Recorre la lista buscando el primer nodo que cumpla la condición.
         while (actual != null) {
             if (condicion.test(actual.dato)) {
                 return actual.dato;
@@ -66,7 +68,7 @@ public class ListaEnlazada<T> {
         return null;
     }
 
-    /** Obtiene el elemento almacenado en la posición indicada. */
+    // Obtiene el elemento almacenado en la posición indicada.
     public T obtener(int indice) {
         if (indice < 0 || indice >= tamanio) {
             return null;
@@ -78,23 +80,23 @@ public class ListaEnlazada<T> {
         return actual.dato;
     }
 
-    /** Devuelve la cantidad de elementos de la lista. */
+    // Devuelve la cantidad de elementos de la lista.
     public int tamanio() {
         return tamanio;
     }
 
-    /** Indica si la lista no tiene elementos. */
+    // Indica si la lista no tiene elementos.
     public boolean estaVacia() {
         return tamanio == 0;
     }
 
-    /** Vacía por completo la lista. */
+    // Vacía por completo la lista.
     public void limpiar() {
         cabeza = null;
         tamanio = 0;
     }
 
-    /** Muestra la lista en formato de líneas para consola. */
+    // Muestra la lista en formato de líneas para consola.
     public String mostrarEnLineas() {
         StringBuilder sb = new StringBuilder();
         Nodo<T> actual = cabeza;

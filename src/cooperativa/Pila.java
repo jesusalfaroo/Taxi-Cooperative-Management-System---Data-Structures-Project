@@ -1,9 +1,9 @@
 package cooperativa;
-/** Implementación manual de una pila LIFO usando nodos enlazados. */
 
-
+// Implementación manual de una pila LIFO usando nodos enlazados.
 public class Pila<T> {
 
+    // Nodo interno que representa cada elemento de la pila, con su dato y referencia al siguiente nodo.
     private static class Nodo<T> {
         T dato;
         Nodo<T> siguiente;
@@ -16,7 +16,7 @@ public class Pila<T> {
     private Nodo<T> tope;
     private int tamanio;
 
-    /** Inserta un elemento en el tope de la pila. */
+    // Inserta un elemento en el tope de la pila.
     public void apilar(T dato) {
         Nodo<T> nuevo = new Nodo<>(dato);
         nuevo.siguiente = tope;
@@ -24,7 +24,7 @@ public class Pila<T> {
         tamanio++;
     }
 
-    /** Retira y devuelve el elemento del tope de la pila. */
+    // Retira y devuelve el elemento del tope de la pila.
     public T desapilar() {
         if (tope == null) {
             return null;
@@ -35,22 +35,22 @@ public class Pila<T> {
         return dato;
     }
 
-    /** Devuelve el elemento del tope sin retirarlo. */
+    // Devuelve el elemento del tope sin retirarlo.
     public T verTope() {
         return tope == null ? null : tope.dato;
     }
 
-    /** Indica si la pila está vacía. */
+    // Indica si la pila está vacía.
     public boolean estaVacia() {
         return tope == null;
     }
 
-    /** Devuelve el número de elementos de la pila. */
+    // Devuelve el número de elementos de la pila.
     public int tamanio() {
         return tamanio;
     }
 
-    /** Muestra la pila en orden desde el tope hacia abajo. */
+    // Muestra la pila en orden desde el tope hacia abajo.
     public String mostrarEnLineas() {
         StringBuilder sb = new StringBuilder();
         Nodo<T> actual = tope;
